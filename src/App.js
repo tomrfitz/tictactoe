@@ -33,7 +33,7 @@ function Board({ xIsNext, squares, onPlay, currentMove }) {
   return (
     <>
       <div className="status">{status}</div>
-      <div className="currentMove">The current move is: {currentMove}</div>
+      <div className="currentMove">You are at move #{currentMove}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
