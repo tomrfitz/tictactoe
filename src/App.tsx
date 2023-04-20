@@ -106,9 +106,19 @@ export default function Game() {
   }
 
   var moves = history.map((_squares, move) => {
-    let description;
+    let description: string;
     if (move > 0) {
       description = "Go to move #" + move;
+      const prevSquares = history[move - 1];
+      const nextSquares = history[move];
+      const turnTaker = move % 2 === 0 ? "O" : "X";
+      for (let i = 0; i < prevSquares.length; i++) {
+        if (prevSquares[i] !== nextSquares[i]) {
+          const coordinates: number[] = [(i % 3) + 1, 3 - Math.floor(i / 3)];
+          description += ` (${turnTaker} at ${coordinates})`;
+          break;
+        }
+      }
     } else {
       description = "Go to game start";
     }
