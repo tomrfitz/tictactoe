@@ -83,7 +83,20 @@ function Board({
     <>
       <div className="status">{status}</div>
       <div className="currentMove">You are at move #{currentMove}</div>
-      <div>{rows}</div>
+      <div className="board">
+        <div className="yCoords">
+          <div className="yCoord">3</div>
+          <div className="yCoord">2</div>
+          <div className="yCoord">1</div>
+        </div>
+        <div className="rows">{rows}</div>
+        <div className="coordLabel">Y/X</div>
+        <div className="xCoords">
+          <div className="xCoord">1</div>
+          <div className="xCoord">2</div>
+          <div className="xCoord">3</div>
+        </div>
+      </div>
     </>
   );
 }
