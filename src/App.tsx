@@ -39,11 +39,22 @@ function Board({
   }
 
   const winner = calculateWinner(squares);
+
   let status;
   if (winner) {
-    status = "Winner: " + winner;
+    status = "Winner: " + winner[0];
+    for (let i = 0; i < winner[1].length; i++) {
+      const winnerIndex: number = winner[1][i];
+      document
+        .getElementsByClassName("square")
+        [winnerIndex].classList.add("winner");
+    }
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
+    const prevWinners = document.getElementsByClassName("square");
+    for (let i = 0; i < prevWinners.length; i++) {
+      prevWinners[i].classList.remove("winner");
+    }
   }
 
   const boardRows: number = 3;
@@ -148,7 +159,8 @@ function calculateWinner(squares: any[]) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      const winningLine = [a, b, c];
+      return [squares[a], winningLine];
     }
   }
   return null;
