@@ -53,7 +53,6 @@ function Board({
     const row: any[] = [];
     for (let j = 0; j < boardColumns; j++) {
       const squareIndex: number = i * boardColumns + j;
-      console.log("squareIndex", squareIndex);
       row.push(
         <Square
           key={squareIndex}
@@ -83,6 +82,7 @@ export default function Game() {
   const [currentMove, setCurrentMove] = useState(0);
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
+  const [listReverse, setListReverse] = useState(false);
 
   function handlePlay(nextSquares: any[]) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
@@ -94,7 +94,7 @@ export default function Game() {
     setCurrentMove(nextMove);
   }
 
-  const moves = history.map((_squares, move) => {
+  var moves = history.map((_squares, move) => {
     let description;
     if (move > 0) {
       description = "Go to move #" + move;
@@ -108,6 +108,14 @@ export default function Game() {
     );
   });
 
+  const reverseMoveList = () => {
+    setListReverse(!listReverse);
+  };
+
+  const ReverseMoveListButton = () => {
+    return <button onClick={reverseMoveList}>Reverse Move List</button>;
+  };
+
   return (
     <div className="game">
       <div className="game-board">
@@ -119,7 +127,8 @@ export default function Game() {
         />
       </div>
       <div className="game-info">
-        <ol>{moves}</ol>
+        <ReverseMoveListButton />
+        <ul>{listReverse ? moves : moves.reverse()}</ul>
       </div>
     </div>
   );
