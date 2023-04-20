@@ -62,11 +62,14 @@ export default function Game() {
     setXIsNext(!xIsNext);
   }
 
-  function jumpTo(move) {}
+  function jumpTo(nextMove) {
+    // TODO
+  }
+
   const moves = history.map((squares, move) => {
     let description;
     if (move > 0) {
-      description = `Go to move #${move}`;
+      description = "Go to move #" + move;
     } else {
       description = "Go to game start";
     }
