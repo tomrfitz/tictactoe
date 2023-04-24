@@ -15,17 +15,22 @@ function Square({
   );
 }
 
-function Board({
-  xIsNext,
-  squares,
-  onPlay,
-  currentMove,
-}: {
+/*
+React Properties:
+- Mutable by components other than self
+
+React States:
+- Mutable only by self
+*/
+
+interface Props {
   xIsNext: boolean;
   squares: any[];
   onPlay: any;
   currentMove: number;
-}) {
+}
+
+const Board: React.FC<Props> = ({ xIsNext, squares, onPlay, currentMove, }) => {
   function handleClick(i: number) {
     if (calculateWinner(squares) || squares[i]) {
       return;
@@ -33,10 +38,9 @@ function Board({
     const nextSquares = squares.slice();
     if (xIsNext) {
       nextSquares[i] = "X";
-      onPlay(nextSquares);
-      return;
     } else {
-      // nextSquares[i] = "O";
+      console.log(i);
+      nextSquares[i] = "O";
     }
     onPlay(nextSquares);
   }
@@ -117,25 +121,17 @@ export default function Game() {
   const currentSquares = history[currentMove];
   const [listReverse, setListReverse] = useState(false);
   const [nums, setNums] = useState<number[]>([]);
-  const {
-    serverMove,
-  }: // error,
-  // loading,
-  {
-    serverMove: MessageResponse | null;
-    // error: string | null;
-    // loading: boolean;
-  } = useFetchServerMove(nums);
+  const { fetchServerMove } = useFetchServerMove();
 
-  function handlePlay(nextSquares: any[]) {
-    console.log("xIsNext", xIsNext);
+  async function handlePlay(nextSquares: any[]) {
+    // console.log("xIsNext", xIsNext);
     var indexes = [];
 
     if (xIsNext) {
       const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
       setHistory(nextHistory);
       setCurrentMove(nextHistory.length - 1);
-      console.log("currentMove X", currentMove);
+      // console.log("currentMove X", currentMove);
       for (let i = 0; i < nextSquares.length; i++) {
         if (nextSquares[i] !== null) {
           indexes.push(i);
@@ -145,14 +141,13 @@ export default function Game() {
     }
 
     if (!xIsNext) {
-      if (serverMove !== null) {
-        let serverIdx = Number(serverMove.message);
-        nextSquares[serverIdx] = "O";
-      }
+      const serverMove = await fetchServerMove(nums);
+      nextSquares[serverMove] = "O";
       const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+      console.log(nextHistory);
       setHistory(nextHistory);
       setCurrentMove(nextHistory.length - 1);
-      console.log("currentMove O", currentMove);
+      // console.log("currentMove O", currentMove);
       for (let i = 0; i < nextSquares.length; i++) {
         if (nextSquares[i] !== null) {
           indexes.push(i);
@@ -162,8 +157,8 @@ export default function Game() {
     }
   }
 
-  console.log(nums);
-  console.log(serverMove);
+  // console.log(nums);
+  // console.log(serverMove);
 
   function jumpTo(nextMove: number) {
     setCurrentMove(nextMove);
