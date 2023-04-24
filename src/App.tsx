@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useFetchServerMove, { MessageResponse } from "./useFetchServerMove";
 
 function Square({
   value,
@@ -8,7 +9,7 @@ function Square({
   onSquareClick: any;
 }) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button type="submit" className="square" onClick={onSquareClick}>
       {value}
     </button>
   );
@@ -32,8 +33,10 @@ function Board({
     const nextSquares = squares.slice();
     if (xIsNext) {
       nextSquares[i] = "X";
+      onPlay(nextSquares);
+      return;
     } else {
-      nextSquares[i] = "O";
+      // nextSquares[i] = "O";
     }
     onPlay(nextSquares);
   }
@@ -79,6 +82,12 @@ function Board({
     );
   }
 
+  useEffect(() => {
+    if (!xIsNext) {
+      onPlay(squares);
+    }
+  }, [currentMove, xIsNext, onPlay, squares]);
+
   return (
     <>
       <div className="status">{status}</div>
@@ -107,12 +116,54 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
   const [listReverse, setListReverse] = useState(false);
+  const [nums, setNums] = useState<number[]>([]);
+  const {
+    serverMove,
+  }: // error,
+  // loading,
+  {
+    serverMove: MessageResponse | null;
+    // error: string | null;
+    // loading: boolean;
+  } = useFetchServerMove(nums);
 
   function handlePlay(nextSquares: any[]) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
+    console.log("xIsNext", xIsNext);
+    var indexes = [];
+
+    if (xIsNext) {
+      const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+      setHistory(nextHistory);
+      setCurrentMove(nextHistory.length - 1);
+      console.log("currentMove X", currentMove);
+      for (let i = 0; i < nextSquares.length; i++) {
+        if (nextSquares[i] !== null) {
+          indexes.push(i);
+        }
+      }
+      setNums(indexes);
+    }
+
+    if (!xIsNext) {
+      if (serverMove !== null) {
+        let serverIdx = Number(serverMove.message);
+        nextSquares[serverIdx] = "O";
+      }
+      const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+      setHistory(nextHistory);
+      setCurrentMove(nextHistory.length - 1);
+      console.log("currentMove O", currentMove);
+      for (let i = 0; i < nextSquares.length; i++) {
+        if (nextSquares[i] !== null) {
+          indexes.push(i);
+        }
+      }
+      setNums(indexes);
+    }
   }
+
+  console.log(nums);
+  console.log(serverMove);
 
   function jumpTo(nextMove: number) {
     setCurrentMove(nextMove);
