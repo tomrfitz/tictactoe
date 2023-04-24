@@ -9,7 +9,7 @@ const useFetchServerMove = () => {
   // const [error, setError] = useState<string | null>(null);
   // const [loading, setLoading] = useState(false);
 
-  const fetchServerMove = async (nums: number[]) => {
+  const fetchServerMove = async (nums: number[]): Promise<number | null> => {
     const response = await fetch("http://localhost:8080/", {
       method: "POST",
       headers: {

@@ -142,6 +142,7 @@ export default function Game() {
 
     if (!xIsNext) {
       const serverMove = await fetchServerMove(nums);
+      if (!serverMove) return;
       nextSquares[serverMove] = "O";
       const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
       console.log(nextHistory);
